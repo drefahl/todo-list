@@ -11,7 +11,7 @@ describe('Integration -> Health Check', () => {
   });
 
   it('should return 200', async () => {
-    const res = await request(app.server).get('/health');
+    const res = await request(app.server).get('/api/v1/health');
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ time: expect.any(String), uptime: expect.any(Number) });

@@ -1,9 +1,18 @@
 import type { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
 import { hasZodFastifySchemaValidationErrors, isResponseSerializationError } from 'fastify-type-provider-zod';
 import z, { ZodError } from 'zod';
+import { NotFoundError } from '@/errors/NotFoundError';
 
 export function errorHandler(err: FastifyError, request: FastifyRequest, reply: FastifyReply) {
   request.log.error(err);
+
+  if (err instanceof NotFoundError) {
+    return reply.status(404).send({
+      error: 'Not Found',
+      message: err.message,
+      statusCode: 404,
+    });
+  }
 
   if (err instanceof ZodError) {
     return reply.status(400).send({
