@@ -9,9 +9,21 @@ jobs:
     strategy:
       matrix:
         node-version: [22]
+    env:
+      DATABASE_URL: postgresql://postgres:password@localhost:5432/todo_list?schema=test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Start test database
+        run: docker compose -f infra/docker-compose.yml up -d
+
+      - name: Wait for Postgres to be ready
+        run: |
+          until docker compose -f infra/docker-compose.yml exec db pg_isready -U postgres; do
+            echo "Waiting for Postgres..."
+            sleep 1
+          done
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -29,6 +41,14 @@ jobs:
       - name: Install dependencies (API)
         working-directory: api
         run: pnpm install --recursive --frozen-lockfile
+
+      - name: Push Prisma schema to Test DB
+        working-directory: api
+        run: pnpm prisma db push
+
+      - name: Generate Prisma Client
+        working-directory: api
+        run: pnpm prisma generate
 
       - name: Run API tests
         working-directory: api
