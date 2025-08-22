@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "format": "pnpm --filter web format && pnpm --filter api format"
+  }
+}
