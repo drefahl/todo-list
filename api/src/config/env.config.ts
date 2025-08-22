@@ -8,6 +8,7 @@ const envSchema = z.object({
   HOSTNAME: z.string().default('localhost'),
   PORT: z.coerce.number().default(3333),
   DATABASE_URL: z.url(),
+  CORS_ORIGIN: z.string().default('*'),
 });
 
 const _env = envSchema.safeParse(process.env);
