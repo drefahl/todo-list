@@ -1,4 +1,5 @@
 {
+  "name": "api",
   "main": "src/index.js",
   "packageManager": "pnpm@10.7.0",
   "scripts": {
