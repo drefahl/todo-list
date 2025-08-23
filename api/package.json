@@ -11,7 +11,8 @@
     "lint:fix": "eslint . --fix ",
     "format": "prettier --write src",
     "test": "vitest run ./tests",
-    "test:integration": "vitest run ./tests/integration"
+    "test:integration": "vitest run ./tests/integration",
+    "generate:openapi": "ts-node -r tsconfig-paths/register --transpile-only scripts/generate-openapi.ts"
   },
   "dependencies": {
     "@fastify/cors": "^11.1.0",
