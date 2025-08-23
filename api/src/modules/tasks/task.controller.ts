@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { createTaskSchema, updateTaskSchema } from './task.dtos';
+import { createTaskSchema, updateTaskSchema } from 'shared';
 import { TaskService } from './task.service';
 
 export class TaskController {

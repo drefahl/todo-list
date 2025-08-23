@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { TaskController } from './task.controller';
-import { createTaskSchema, updateTaskSchema } from './task.dtos';
+import { createTaskSchema, updateTaskSchema } from 'shared';
 import { positiveIntegerIdSchema as positiveIntegerIdSchema } from '@/schemas/id.schema';
 
 const controller = new TaskController();

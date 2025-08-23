@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { CreateTaskDTO } from '@/modules/tasks/task.dtos';
+import { CreateTaskDTO } from 'shared';
 
 export async function cleanDatabase() {
   await prisma.task.deleteMany();

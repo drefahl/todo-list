@@ -1,33 +1,24 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "_version": "22.13.1",
   "compilerOptions": {
-    "lib": [
-      "es2023"
-    ],
+    "lib": ["es2023"],
     "target": "es2022",
     "module": "node16",
     "moduleResolution": "node16",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
+    "declaration": true,
+    "composite": true,
     "outDir": "./dist",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "shared": [
-        "../shared/src"
-      ]
-    }
+    "rootDir": "./src",
+    "baseUrl": "."
   },
   "include": [
-    "src/**/*.ts",
-    "tests/**/*.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "dist",
+    "dist"
   ]
 }

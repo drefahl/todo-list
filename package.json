@@ -1,5 +1,7 @@
 {
   "scripts": {
+    "build:api": "pnpm --filter shared build && pnpm --filter api build",
+    "start:api": "pnpm --filter api start",
     "format": "pnpm --filter web format && pnpm --filter api format"
   }
 }

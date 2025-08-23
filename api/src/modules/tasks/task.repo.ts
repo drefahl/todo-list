@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { CreateTaskDTO, UpdateTaskDTO } from './task.dtos';
+import { CreateTaskDTO, UpdateTaskDTO } from 'shared';
 
 export class TaskRepository {
   async findAll() {

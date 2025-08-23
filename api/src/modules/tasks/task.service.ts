@@ -1,5 +1,5 @@
 import { NotFoundError } from '@/errors/NotFoundError';
-import { CreateTaskDTO, UpdateTaskDTO } from './task.dtos';
+import { CreateTaskDTO, UpdateTaskDTO } from 'shared';
 import { TaskRepository } from './task.repo';
 
 export class TaskService {
