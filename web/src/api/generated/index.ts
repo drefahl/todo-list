@@ -6,7 +6,9 @@
  */
 import { useMutation, useQuery } from '@tanstack/vue-query';
 import type {
+  DataTag,
   MutationFunction,
+  QueryClient,
   QueryFunction,
   QueryKey,
   UseMutationOptions,
@@ -32,6 +34,8 @@ export type CreateTaskBody = {
    * @maxLength 100
    */
   title: string;
+  /** @maxLength 500 */
+  description?: string;
   /**
    * @minimum 0
    * @maximum 9007199254740991
@@ -46,6 +50,8 @@ export type UpdateTaskBody = {
    * @maxLength 100
    */
   title?: string;
+  /** @maxLength 500 */
+  description?: string;
   /**
    * @minimum 0
    * @maximum 9007199254740991
@@ -66,7 +72,7 @@ export const getHealthQueryOptions = <
   TData = Awaited<ReturnType<typeof health>>,
   TError = AxiosError<unknown>,
 >(options?: {
-  query?: UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>;
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>;
   axios?: AxiosRequestConfig;
 }) => {
   const { query: queryOptions, axios: axiosOptions } = options ?? {};
@@ -82,15 +88,20 @@ export const getHealthQueryOptions = <
 export type HealthQueryResult = NonNullable<Awaited<ReturnType<typeof health>>>;
 export type HealthQueryError = AxiosError<unknown>;
 
-export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = AxiosError<unknown>>(options?: {
-  query?: UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>;
-  axios?: AxiosRequestConfig;
-}): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } {
+export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = AxiosError<unknown>>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getHealthQueryOptions(options);
 
-  const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
 
-  query.queryKey = unref(queryOptions).queryKey as QueryKey;
+  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
 
   return query;
 }
@@ -107,7 +118,7 @@ export const getGetTasksQueryOptions = <
   TData = Awaited<ReturnType<typeof getTasks>>,
   TError = AxiosError<unknown>,
 >(options?: {
-  query?: UseQueryOptions<Awaited<ReturnType<typeof getTasks>>, TError, TData>;
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTasks>>, TError, TData>>;
   axios?: AxiosRequestConfig;
 }) => {
   const { query: queryOptions, axios: axiosOptions } = options ?? {};
@@ -123,15 +134,20 @@ export const getGetTasksQueryOptions = <
 export type GetTasksQueryResult = NonNullable<Awaited<ReturnType<typeof getTasks>>>;
 export type GetTasksQueryError = AxiosError<unknown>;
 
-export function useGetTasks<TData = Awaited<ReturnType<typeof getTasks>>, TError = AxiosError<unknown>>(options?: {
-  query?: UseQueryOptions<Awaited<ReturnType<typeof getTasks>>, TError, TData>;
-  axios?: AxiosRequestConfig;
-}): UseQueryReturnType<TData, TError> & { queryKey: QueryKey } {
+export function useGetTasks<TData = Awaited<ReturnType<typeof getTasks>>, TError = AxiosError<unknown>>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTasks>>, TError, TData>>;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getGetTasksQueryOptions(options);
 
-  const query = useQuery(queryOptions) as UseQueryReturnType<TData, TError> & { queryKey: QueryKey };
+  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
 
-  query.queryKey = unref(queryOptions).queryKey as QueryKey;
+  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
 
   return query;
 }
@@ -169,13 +185,16 @@ export type CreateTaskMutationResult = NonNullable<Awaited<ReturnType<typeof cre
 export type CreateTaskMutationBody = CreateTaskBody;
 export type CreateTaskMutationError = AxiosError<unknown>;
 
-export const useCreateTask = <TError = AxiosError<unknown>, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof createTask>>, TError, { data: CreateTaskBody }, TContext>;
-  axios?: AxiosRequestConfig;
-}): UseMutationReturnType<Awaited<ReturnType<typeof createTask>>, TError, { data: CreateTaskBody }, TContext> => {
+export const useCreateTask = <TError = AxiosError<unknown>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof createTask>>, TError, { data: CreateTaskBody }, TContext>;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): UseMutationReturnType<Awaited<ReturnType<typeof createTask>>, TError, { data: CreateTaskBody }, TContext> => {
   const mutationOptions = getCreateTaskMutationOptions(options);
 
-  return useMutation(mutationOptions);
+  return useMutation(mutationOptions, queryClient);
 };
 
 export const updateTask = (
@@ -225,15 +244,18 @@ export type UpdateTaskMutationResult = NonNullable<Awaited<ReturnType<typeof upd
 export type UpdateTaskMutationBody = UpdateTaskBody;
 export type UpdateTaskMutationError = AxiosError<unknown>;
 
-export const useUpdateTask = <TError = AxiosError<unknown>, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof updateTask>>,
-    TError,
-    { id: number; data: UpdateTaskBody },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}): UseMutationReturnType<
+export const useUpdateTask = <TError = AxiosError<unknown>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateTask>>,
+      TError,
+      { id: number; data: UpdateTaskBody },
+      TContext
+    >;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): UseMutationReturnType<
   Awaited<ReturnType<typeof updateTask>>,
   TError,
   { id: number; data: UpdateTaskBody },
@@ -241,7 +263,7 @@ export const useUpdateTask = <TError = AxiosError<unknown>, TContext = unknown>(
 > => {
   const mutationOptions = getUpdateTaskMutationOptions(options);
 
-  return useMutation(mutationOptions);
+  return useMutation(mutationOptions, queryClient);
 };
 
 export const deleteTask = (id: MaybeRef<number>, options?: AxiosRequestConfig): Promise<AxiosResponse<null>> => {
@@ -274,11 +296,14 @@ export type DeleteTaskMutationResult = NonNullable<Awaited<ReturnType<typeof del
 
 export type DeleteTaskMutationError = AxiosError<unknown>;
 
-export const useDeleteTask = <TError = AxiosError<unknown>, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteTask>>, TError, { id: number }, TContext>;
-  axios?: AxiosRequestConfig;
-}): UseMutationReturnType<Awaited<ReturnType<typeof deleteTask>>, TError, { id: number }, TContext> => {
+export const useDeleteTask = <TError = AxiosError<unknown>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteTask>>, TError, { id: number }, TContext>;
+    axios?: AxiosRequestConfig;
+  },
+  queryClient?: QueryClient,
+): UseMutationReturnType<Awaited<ReturnType<typeof deleteTask>>, TError, { id: number }, TContext> => {
   const mutationOptions = getDeleteTaskMutationOptions(options);
 
-  return useMutation(mutationOptions);
+  return useMutation(mutationOptions, queryClient);
 };

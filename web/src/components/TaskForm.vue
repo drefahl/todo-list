@@ -31,6 +31,25 @@
 
         <div class="space-y-1">
           <FloatLabel>
+            <Textarea
+              id="description"
+              v-model="formData.description"
+              :invalid="!!errors.description"
+              placeholder="Digite a descrição da tarefa..."
+              class="w-full"
+              rows="3"
+              auto-resize
+            />
+            <label for="description">Descrição</label>
+          </FloatLabel>
+
+          <small v-if="errors.description" class="text-red-500 block">
+            {{ errors.description }}
+          </small>
+        </div>
+
+        <div class="space-y-1">
+          <FloatLabel>
             <Dropdown
               id="priority"
               v-model="formData.priority"
@@ -79,6 +98,7 @@ import { ref, reactive } from 'vue';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
+import Textarea from 'primevue/textarea';
 import Dropdown from 'primevue/dropdown';
 import FloatLabel from 'primevue/floatlabel';
 import { useTaskStore } from '@/stores/taskStore';
@@ -89,11 +109,13 @@ const taskStore = useTaskStore();
 
 const formData = reactive({
   title: '',
+  description: '',
   priority: 1,
 });
 
 const errors = reactive({
   title: '',
+  description: '',
   priority: '',
 });
 
@@ -107,6 +129,7 @@ const priorityOptions = [
 
 function validateForm() {
   errors.title = '';
+  errors.description = '';
   errors.priority = '';
 
   try {
@@ -144,8 +167,10 @@ async function handleSubmit() {
 
 function resetForm() {
   formData.title = '';
+  formData.description = '';
   formData.priority = 1;
   errors.title = '';
+  errors.description = '';
   errors.priority = '';
 }
 </script>

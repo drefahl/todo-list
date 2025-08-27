@@ -27,17 +27,55 @@
                 class="text-xs flex-shrink-0"
               />
             </div>
+
+            <p
+              v-if="task.description"
+              class="text-xs sm:text-sm text-surface-600 mt-1 leading-relaxed"
+              :class="{ 'line-through text-surface-400': task.completed }"
+            >
+              {{ task.description }}
+            </p>
           </div>
 
-          <div v-else class="mb-2">
+          <div v-else class="mb-2 space-y-2">
             <InputText
               ref="editInput"
               v-model="editTitle"
+              placeholder="Título da tarefa"
               class="w-full text-sm sm:text-base"
               @keydown.enter="saveEdit"
               @keydown.escape="cancelEdit"
-              @blur="saveEdit"
             />
+
+            <Textarea
+              v-model="editDescription"
+              placeholder="Descrição da tarefa (opcional)"
+              class="w-full text-sm"
+              rows="2"
+              auto-resize
+              @keydown.enter.ctrl="saveEdit"
+              @keydown.escape="cancelEdit"
+            />
+
+            <div class="flex gap-2 justify-end">
+              <Button
+                @click="saveEdit"
+                icon="pi pi-check"
+                severity="success"
+                size="small"
+                text
+                v-tooltip="'Salvar (Enter)'"
+              />
+
+              <Button
+                @click="cancelEdit"
+                icon="pi pi-times"
+                severity="secondary"
+                size="small"
+                text
+                v-tooltip="'Cancelar (Esc)'"
+              />
+            </div>
           </div>
 
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
@@ -86,18 +124,20 @@ import { ref, nextTick, computed } from 'vue';
 import Card from 'primevue/card';
 import Checkbox from 'primevue/checkbox';
 import InputText from 'primevue/inputtext';
+import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import type { Task } from '@/stores/taskStore';
 import { useTaskStore } from '@/stores/taskStore';
 import { useConfirm } from 'primevue/useconfirm';
+import type { UpdateTaskBody } from '@/api/generated';
 
 interface Props {
   task: Task;
 }
 
 interface Emits {
-  update: [task: Task, newTitle: string];
+  update: [task: Task, updateData: UpdateTaskBody];
   delete: [task: Task];
   toggle: [task: Task];
 }
@@ -110,6 +150,7 @@ const confirm = useConfirm();
 
 const isEditing = ref(false);
 const editTitle = ref('');
+const editDescription = ref('');
 const editInput = ref<HTMLInputElement>();
 
 const isUpdating = computed(() => taskStore.isUpdating);
@@ -129,20 +170,40 @@ const prioritySeverity = {
 const startEdit = async () => {
   isEditing.value = true;
   editTitle.value = props.task.title;
+  editDescription.value = props.task.description || '';
   await nextTick();
   editInput.value?.focus();
 };
 
 const saveEdit = () => {
-  if (editTitle.value.trim() && editTitle.value.trim() !== props.task.title) {
-    emit('update', props.task, editTitle.value.trim());
+  const title = editTitle.value.trim();
+  const description = editDescription.value.trim();
+
+  // Check if anything changed
+  const titleChanged = title !== props.task.title;
+  const descriptionChanged = description !== (props.task.description || '');
+
+  if (title && (titleChanged || descriptionChanged)) {
+    const updateData: UpdateTaskBody = {};
+
+    if (titleChanged) {
+      updateData.title = title;
+    }
+
+    if (descriptionChanged) {
+      updateData.description = description || undefined;
+    }
+
+    emit('update', props.task, updateData);
   }
+
   cancelEdit();
 };
 
 const cancelEdit = () => {
   isEditing.value = false;
   editTitle.value = '';
+  editDescription.value = '';
 };
 
 const confirmDelete = () => {

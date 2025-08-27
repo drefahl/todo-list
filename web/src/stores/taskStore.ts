@@ -6,6 +6,7 @@ import type { CreateTaskBody, UpdateTaskBody } from '@/api/generated';
 export interface Task {
   id: number;
   title: string;
+  description?: string | null;
   priority: number;
   completed: boolean;
   createdAt: string;

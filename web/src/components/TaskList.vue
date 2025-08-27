@@ -75,12 +75,13 @@ import ProgressSpinner from 'primevue/progressspinner';
 
 import { useTaskStore, type Task } from '@/stores/taskStore';
 import TaskItem from './TaskItem.vue';
+import type { UpdateTaskBody } from '@/api/generated';
 
 const taskStore = useTaskStore();
 
-const handleUpdateTask = async (task: Task, newTitle: string) => {
+const handleUpdateTask = async (task: Task, updateData: UpdateTaskBody) => {
   try {
-    await taskStore.updateTask(task.id, { title: newTitle });
+    await taskStore.updateTask(task.id, updateData);
   } catch (error) {
     console.error('Failed to update task:', error);
   }
