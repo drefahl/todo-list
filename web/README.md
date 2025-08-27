@@ -1,39 +1,102 @@
-# web
+# Todo List Web
 
-This template should help get you started developing with Vue 3 in Vite.
+Frontend da aplicação Todo List construído com Vue.js 3, TypeScript e TailwindCSS.
 
-## Recommended IDE Setup
+## 🚀 Tecnologias
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Vue.js 3** - Framework progressivo
+- **TypeScript** - Tipagem estática
+- **Vite** - Build tool moderna
+- **PrimeVue** - Biblioteca de componentes UI
+- **TailwindCSS** - Framework CSS utilitário
+- **Pinia** - Store management
+- **TanStack Query** - Server state management
+- **Axios** - Cliente HTTP
+- **ESLint + Prettier** - Code quality
 
-## Type Support for `.vue` Imports in TS
+## 📁 Estrutura
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+```
+web/
+├── public/
+│   └── favicon.ico        # Ícone da aplicação
+├── src/
+│   ├── api/
+│   │   ├── axios.config.ts    # Configuração do Axios
+│   │   └── generated/         # APIs geradas do backend
+│   ├── assets/
+│   │   └── main.css          # Estilos globais
+│   ├── components/
+│   │   ├── TaskForm.vue      # Formulário de tarefa
+│   │   ├── TaskItem.vue      # Item de tarefa
+│   │   └── TaskList.vue      # Lista de tarefas
+│   ├── stores/
+│   │   └── taskStore.ts      # Store Pinia para tarefas
+│   ├── App.vue               # Componente raiz
+│   └── main.ts               # Entry point
+├── index.html                # Template HTML
+├── nginx.conf                # Configuração Nginx para produção
+└── Dockerfile
+```
 
-## Customize configuration
+## ⚙️ Configuração
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+### Variáveis de Ambiente
 
-## Project Setup
+Crie um arquivo `.env` na pasta `web/`:
 
-```sh
+```env
+# API URL
+VITE_API_BASE_URL=http://localhost:3333
+
+# Ambiente
+VITE_NODE_ENV=development
+```
+
+## 🛠️ Executando Localmente
+
+### 1. Pré-requisitos
+
+```bash
+# Node.js 22+ e pnpm
+node --version  # >= 22.12.0
+pnpm --version  # >= 10.0.0
+```
+
+### 2. Instalar Dependências
+
+```bash
+cd web
 pnpm install
 ```
 
-### Compile and Hot-Reload for Development
+### 3. Executar em Desenvolvimento
 
-```sh
+```bash
+# Modo desenvolvimento com hot reload
 pnpm dev
+
+# A aplicação estará disponível em http://localhost:3000
 ```
 
-### Type-Check, Compile and Minify for Production
+### 4. Build para Produção
 
-```sh
+```bash
+# Compilar para produção
 pnpm build
+
+# Preview da versão de produção
+pnpm preview
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+## 📊 Scripts Disponíveis
 
-```sh
-pnpm lint
+```bash
+pnpm dev          # Desenvolvimento com Vite
+pnpm build        # Build para produção
+pnpm preview      # Preview da versão de produção
+pnpm build-only   # Build sem type checking
+pnpm type-check   # Verificar tipos TypeScript
+pnpm lint         # Executar ESLint
+pnpm format       # Formatar código com Prettier
 ```

@@ -1,0 +1,59 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: todo-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: todo_list
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - todo-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: todo-api
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/todo_list
+      PORT: 3000
+      NODE_ENV: production
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "3333:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - todo-network
+
+  web:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:3333
+    container_name: todo-web
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - todo-network
+
+volumes:
+  db_data:
+    driver: local
+
+networks:
+  todo-network:
+    driver: bridge
