@@ -14,6 +14,7 @@ export async function createTestTask(data: CreateTaskDTO) {
   return prisma.task.create({
     data: {
       title: data.title,
+      description: data.description,
       priority: data.priority ?? 0,
       completed: data.completed ?? false,
     },

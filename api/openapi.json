@@ -69,6 +69,10 @@
                     "minLength": 2,
                     "maxLength": 100
                   },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
                   "priority": {
                     "type": "integer",
                     "minimum": 0,
@@ -110,6 +114,10 @@
                     "type": "string",
                     "minLength": 2,
                     "maxLength": 100
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 500
                   },
                   "priority": {
                     "type": "integer",
@@ -171,7 +179,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:33333"
+      "url": "http://localhost:3333"
     }
   ]
 }

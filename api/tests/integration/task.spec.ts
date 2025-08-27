@@ -34,6 +34,7 @@ describe('TaskController Integration Tests', () => {
     it('should return all tasks', async () => {
       const task1 = await createTestTask({
         title: 'Test Task 1',
+        description: 'Description for task 1',
         priority: 1,
         completed: false,
       });
@@ -53,12 +54,14 @@ describe('TaskController Integration Tests', () => {
           expect.objectContaining({
             id: task1.id,
             title: 'Test Task 1',
+            description: 'Description for task 1',
             priority: 1,
             completed: false,
           }),
           expect.objectContaining({
             id: task2.id,
             title: 'Test Task 2',
+            description: null,
             priority: 2,
             completed: true,
           }),
@@ -71,6 +74,7 @@ describe('TaskController Integration Tests', () => {
     it('should create a new task with all fields', async () => {
       const newTask = {
         title: 'New Task',
+        description: 'Task description',
         priority: 3,
         completed: false,
       };
@@ -86,6 +90,7 @@ describe('TaskController Integration Tests', () => {
       expect(getAllResponse.body[0]).toEqual(
         expect.objectContaining({
           title: 'New Task',
+          description: 'Task description',
           priority: 3,
           completed: false,
         }),
@@ -108,7 +113,32 @@ describe('TaskController Integration Tests', () => {
       expect(getAllResponse.body[0]).toEqual(
         expect.objectContaining({
           title: 'New Task',
+          description: null,
           priority: 0, // valor padrão
+          completed: false,
+        }),
+      );
+    });
+
+    it('should create a new task with description only', async () => {
+      const newTask = {
+        title: 'New Task',
+        description: 'Only description provided',
+        completed: false,
+      };
+
+      const response = await request(app.server).post('/api/v1/tasks').send(newTask);
+
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual(newTask);
+
+      // Verificar se foi criado corretamente
+      const getAllResponse = await request(app.server).get('/api/v1/tasks');
+      expect(getAllResponse.body[0]).toEqual(
+        expect.objectContaining({
+          title: 'New Task',
+          description: 'Only description provided',
+          priority: 0,
           completed: false,
         }),
       );
@@ -147,18 +177,32 @@ describe('TaskController Integration Tests', () => {
 
       expect(response.status).toBe(400);
     });
+
+    it('should return 400 for description too long', async () => {
+      const newTask = {
+        title: 'Valid Title',
+        description: 'A'.repeat(501), // muito longo (max 500)
+        completed: false,
+      };
+
+      const response = await request(app.server).post('/api/v1/tasks').send(newTask);
+
+      expect(response.status).toBe(400);
+    });
   });
 
   describe('PUT /api/v1/tasks/:id', () => {
     it('should update an existing task', async () => {
       const existingTask = await createTestTask({
         title: 'Original Task',
+        description: 'Original description',
         priority: 1,
         completed: false,
       });
 
       const updateData = {
         title: 'Updated Task',
+        description: 'Updated description',
         priority: 5,
         completed: true,
       };
@@ -170,6 +214,7 @@ describe('TaskController Integration Tests', () => {
         expect.objectContaining({
           id: existingTask.id,
           title: 'Updated Task',
+          description: 'Updated description',
           priority: 5,
           completed: true,
         }),
@@ -180,6 +225,7 @@ describe('TaskController Integration Tests', () => {
       expect(getAllResponse.body[0]).toEqual(
         expect.objectContaining({
           title: 'Updated Task',
+          description: 'Updated description',
           priority: 5,
           completed: true,
         }),
@@ -189,12 +235,14 @@ describe('TaskController Integration Tests', () => {
     it('should update only specific fields', async () => {
       const existingTask = await createTestTask({
         title: 'Original Task',
+        description: 'Original description',
         priority: 1,
         completed: false,
       });
 
       const updateData = {
-        completed: true, // só alterar completed
+        description: 'Updated description only',
+        completed: true, // só alterar description e completed
       };
 
       const response = await request(app.server).put(`/api/v1/tasks/${existingTask.id}`).send(updateData);
@@ -204,6 +252,7 @@ describe('TaskController Integration Tests', () => {
         expect.objectContaining({
           id: existingTask.id,
           title: 'Original Task', // não alterado
+          description: 'Updated description only',
           priority: 1, // não alterado
           completed: true,
         }),
@@ -254,6 +303,7 @@ describe('TaskController Integration Tests', () => {
     it('should delete an existing task', async () => {
       const existingTask = await createTestTask({
         title: 'Task to Delete',
+        description: 'Description to delete',
         priority: 1,
         completed: false,
       });
