@@ -35,6 +35,14 @@
             >
               {{ task.description }}
             </p>
+
+            <p
+              v-if="task.time"
+              class="text-xs sm:text-sm text-surface-600 mt-1 leading-relaxed"
+              :class="{ 'line-through text-surface-400': task.completed }"
+            >
+              {{ task.time }}
+            </p>
           </div>
 
           <div v-else class="mb-2 space-y-2">
@@ -54,6 +62,15 @@
               rows="2"
               auto-resize
               @keydown.enter.ctrl="saveEdit"
+              @keydown.escape="cancelEdit"
+            />
+
+            <InputText
+              ref="editInput"
+              v-model="editTime"
+              placeholder="Time da tarefa"
+              class="w-full text-sm sm:text-base"
+              @keydown.enter="saveEdit"
               @keydown.escape="cancelEdit"
             />
 
@@ -150,6 +167,7 @@ const confirm = useConfirm();
 
 const isEditing = ref(false);
 const editTitle = ref('');
+const editTime = ref('');
 const editDescription = ref('');
 const editInput = ref<HTMLInputElement>();
 
@@ -170,6 +188,7 @@ const prioritySeverity = {
 const startEdit = async () => {
   isEditing.value = true;
   editTitle.value = props.task.title;
+  editTime.value = props.task.time || '';
   editDescription.value = props.task.description || '';
   await nextTick();
   editInput.value?.focus();
@@ -177,13 +196,15 @@ const startEdit = async () => {
 
 const saveEdit = () => {
   const title = editTitle.value.trim();
+  const time = editTime.value.trim();
   const description = editDescription.value.trim();
 
   // Check if anything changed
   const titleChanged = title !== props.task.title;
+  const timeChanged = time !== (props.task.time || '');
   const descriptionChanged = description !== (props.task.description || '');
 
-  if (title && (titleChanged || descriptionChanged)) {
+  if (title && (titleChanged || descriptionChanged || timeChanged)) {
     const updateData: UpdateTaskBody = {};
 
     if (titleChanged) {
@@ -191,7 +212,11 @@ const saveEdit = () => {
     }
 
     if (descriptionChanged) {
-      updateData.description = description || undefined;
+      updateData.description = description || '';
+    }
+
+    if (timeChanged) {
+      updateData.time = time || '';
     }
 
     emit('update', props.task, updateData);
@@ -203,6 +228,7 @@ const saveEdit = () => {
 const cancelEdit = () => {
   isEditing.value = false;
   editTitle.value = '';
+  editTime.value = '';
   editDescription.value = '';
 };
 

@@ -50,6 +50,23 @@
 
         <div class="space-y-1">
           <FloatLabel>
+            <InputText
+              id="time"
+              v-model="formData.time"
+              :invalid="!!errors.time"
+              placeholder="Digite o time"
+              class="w-full"
+            />
+            <label for="time"> Time </label>
+          </FloatLabel>
+
+          <small v-if="errors.time" class="text-red-500 block">
+            {{ errors.time }}
+          </small>
+        </div>
+
+        <div class="space-y-1">
+          <FloatLabel>
             <Dropdown
               id="priority"
               v-model="formData.priority"
@@ -111,11 +128,13 @@ const formData = reactive({
   title: '',
   description: '',
   priority: 1,
+  time: '',
 });
 
 const errors = reactive({
   title: '',
   description: '',
+  time: '',
   priority: '',
 });
 
@@ -131,6 +150,7 @@ function validateForm() {
   errors.title = '';
   errors.description = '';
   errors.priority = '';
+  errors.time = '';
 
   try {
     createTaskSchema.parse(formData);
@@ -169,8 +189,10 @@ function resetForm() {
   formData.title = '';
   formData.description = '';
   formData.priority = 1;
+  formData.time = '';
   errors.title = '';
   errors.description = '';
   errors.priority = '';
+  errors.time = '';
 }
 </script>

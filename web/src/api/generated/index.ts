@@ -41,6 +41,7 @@ export type CreateTaskBody = {
    * @maximum 9007199254740991
    */
   priority?: number;
+  time?: string;
   completed?: boolean;
 };
 
@@ -57,6 +58,7 @@ export type UpdateTaskBody = {
    * @maximum 9007199254740991
    */
   priority?: number;
+  time?: string;
   completed?: boolean;
 };
 

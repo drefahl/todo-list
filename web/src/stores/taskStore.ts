@@ -8,6 +8,7 @@ export interface Task {
   title: string;
   description?: string | null;
   priority: number;
+  time: string | undefined;
   completed: boolean;
   createdAt: string;
   updatedAt: string;

@@ -14,10 +14,13 @@ const prioritySchema = z.number().int().nonnegative().min(0);
 
 const completedSchema = z.boolean();
 
+const timeSchema = z.string().optional();
+
 export const createTaskSchema = z.object({
   title: titleSchema,
   description: descriptionSchema,
   priority: prioritySchema.optional(),
+  time: timeSchema,
   completed: completedSchema.default(false),
 });
 
@@ -27,6 +30,7 @@ export const updateTaskSchema = z.object({
   title: titleSchema.optional(),
   description: descriptionSchema,
   priority: prioritySchema.optional(),
+  time: timeSchema,
   completed: completedSchema.optional(),
 });
 
